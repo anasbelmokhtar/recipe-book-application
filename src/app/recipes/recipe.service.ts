@@ -8,7 +8,7 @@ import {Injectable} from "@angular/core";
 export class RecipeService {
   recipesChanged = new Subject<Recipe[]>();
 
-  private recipes: Recipe[] = [
+  /*private recipes: Recipe[] = [
     new Recipe("Test Recipe",
       "This is a test",
       "https://i2.wp.com/www.downshiftology.com/wp-content/uploads/2015/11/shakshuka-11.jpg",
@@ -25,7 +25,8 @@ export class RecipeService {
         new Ingredient('burger sauce', 1),
 
       ])
-  ];
+  ];*/
+  private recipes: Recipe[] = [];
 
   constructor(private shoppingListService: ShoppingListService) {
 
@@ -53,6 +54,11 @@ export class RecipeService {
 
   deleteRecipe(index: number) {
     this.recipes.splice(index,1);
+    this.recipesChanged.next(this.recipes.slice());
+  }
+
+  setRecipes(recipes: Recipe[]) {
+    this.recipes = recipes;
     this.recipesChanged.next(this.recipes.slice());
   }
 }

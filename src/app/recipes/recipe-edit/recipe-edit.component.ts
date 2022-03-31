@@ -35,9 +35,9 @@ export class RecipeEditComponent implements OnInit {
 
     if(this.editMode){
       const recipe = this.recipeService.getRecipe(this.id);
-      recipeName = recipe.name;
+      recipeName = recipe.recipeName;
       recipeImagePath = recipe.imagePath;
-      recipeDescription = recipe.description;
+      recipeDescription = recipe.recipeDescription;
       if(recipe['ingredients']){
         for (let ingredient of recipe.ingredients){
           recipeIngredients.push(
@@ -53,9 +53,9 @@ export class RecipeEditComponent implements OnInit {
     }
 
     this.recipeForm = new FormGroup({
-      'name': new FormControl(recipeName, Validators.required),
+      'recipeName': new FormControl(recipeName, Validators.required),
       'imagePath': new FormControl(recipeImagePath, Validators.required),
-      'description': new FormControl(recipeDescription, Validators.required),
+      'recipeDescription': new FormControl(recipeDescription, Validators.required),
       'ingredients' : recipeIngredients
     });
   }
