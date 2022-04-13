@@ -3,6 +3,7 @@ import {Recipe} from "../recipe.model";
 import {RecipeService} from "../recipe.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Subscription} from "rxjs";
+import {AuthenticationService} from "../../_services/authentication.service";
 
 @Component({
   selector: 'app-recipe-list',
@@ -16,7 +17,8 @@ export class RecipeListComponent implements OnInit, OnDestroy{
 
   constructor(private recipeService: RecipeService,
               private router: Router,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private auth: AuthenticationService) {
   }
   ngOnInit(){
     this.subscription = this.recipeService.recipesChanged.subscribe(
@@ -33,5 +35,10 @@ export class RecipeListComponent implements OnInit, OnDestroy{
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+  }
+
+  onLogout() {
+    this.auth.logout();
+    this.router.navigate(['login'], {relativeTo: this.route});
   }
 }
