@@ -36,9 +36,4 @@ export class RecipeListComponent implements OnInit, OnDestroy{
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
-
-  onLogout() {
-    this.auth.logout();
-    this.router.navigate(['login'], {relativeTo: this.route});
-  }
 }
