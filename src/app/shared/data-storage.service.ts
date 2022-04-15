@@ -3,10 +3,11 @@ import {HttpClient} from "@angular/common/http";
 import {RecipeService} from "../recipes/recipe.service";
 import {Recipe} from "../recipes/recipe.model";
 import {map, tap} from "rxjs/operators";
+import {AuthenticationService} from "../_services/authentication.service";
 
 @Injectable({providedIn: 'root'})
 export class DataStorageService {
-  constructor(private http: HttpClient, private recipeService: RecipeService) {
+  constructor(private http: HttpClient, private recipeService: RecipeService, private authService: AuthenticationService) {
 
   }
 
@@ -19,7 +20,8 @@ export class DataStorageService {
   }
 
   loadRecipes() {
-    return this.http.get<Recipe[]>('http://localhost:8081/recipe-book/recipes')
+    let u = localStorage.getItem("currentUser");
+    return this.http.get<Recipe[]>('http://localhost:8081/recipe-book/recipes?username='+u)
       .pipe(map(recipes => {
         return recipes.map(recipe =>{
           return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : []};

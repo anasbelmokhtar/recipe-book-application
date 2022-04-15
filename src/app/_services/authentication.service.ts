@@ -5,15 +5,15 @@ import { map } from 'rxjs/operators';
 
 import {User} from "../_models/User";
 import {environment} from "../../environments/environment";
-import {ActivatedRoute, Router} from "@angular/router";
+import {RecipeService} from "../recipes/recipe.service";
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
-  private currentUserSubject: BehaviorSubject<any>;
+  public currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<User>;
 
-  constructor(private http: HttpClient) {
-    this.currentUserSubject = new BehaviorSubject(JSON.parse(localStorage.getItem('currentUser')));
+  constructor(private http: HttpClient, private recipeService: RecipeService) {
+    this.currentUserSubject = new BehaviorSubject(localStorage.getItem('currentUser'));
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
@@ -26,7 +26,7 @@ export class AuthenticationService {
       .pipe(map(user => {
         // store user details and basic auth credentials in local storage to keep user logged in between page refreshes
         user.authdata = window.btoa(username + ':' + password);
-        localStorage.setItem('currentUser', JSON.stringify(user));
+        localStorage.setItem('currentUser', user.username);
         this.currentUserSubject.next(user);
         return user;
       }));
@@ -36,5 +36,17 @@ export class AuthenticationService {
     // remove user from local storage to log user out
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
+    this.recipeService.setRecipes([]);
+  }
+
+  register(username: string, password: string, email: string) {
+
+    console.log("register method called");
+    this.http.post<any>(`${environment.apiUrl}/recipe-book/registration`, { username, password, email }).subscribe(data => {
+      alert("Thank you for signing up! Please check your E-mail for a verification link.")
+      return;
+    })
+
+
   }
 }

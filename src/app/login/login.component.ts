@@ -4,8 +4,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import {AuthenticationService} from "../_services/authentication.service";
 
-@Component({ templateUrl: 'login.component.html' })
+@Component({
+  selector: 'app-login',
+  templateUrl: 'login.component.html' })
 export class LoginComponent implements OnInit {
+  loginMode = true;
   loginForm: FormGroup;
   loading = false;
   submitted = false;
@@ -27,7 +30,8 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
+      email: ['', Validators.email]
     });
 
     // get return url from route parameters or default to '/'
@@ -44,17 +48,27 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.invalid) {
       return;
     }
+    else if(!this.loginMode){
+      this.authenticationService.register(this.f.username.value, this.f.password.value, this.f.email.value);
+      return;
+    }
+    else{
+      this.loading = true;
+      this.authenticationService.login(this.f.username.value, this.f.password.value)
+        .pipe(first())
+        .subscribe(
+          data => {
+            this.router.navigate(["/recipes"]);
+          },
+          error => {
+            this.error = error;
+            this.loading = false;
+          });
+    }
 
-    this.loading = true;
-    this.authenticationService.login(this.f.username.value, this.f.password.value)
-      .pipe(first())
-      .subscribe(
-        data => {
-          this.router.navigate(["/recipes"]);
-        },
-        error => {
-          this.error = error;
-          this.loading = false;
-        });
+  }
+
+  onSwitchMode(){
+    this.loginMode = !this.loginMode;
   }
 }
