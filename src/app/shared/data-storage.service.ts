@@ -12,8 +12,9 @@ export class DataStorageService {
   }
 
   storeRecipes(){
+    let u = localStorage.getItem("currentUser");
     const recipes = this.recipeService.getRecipes();
-    this.http.post('http://localhost:8081/recipe-book/insert-recipes',recipes)
+    this.http.post('http://localhost:8081/recipe-book/insert-recipes?username='+u,recipes)
       .subscribe(response =>{
       console.log(response);
     });
